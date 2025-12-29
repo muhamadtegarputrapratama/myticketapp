@@ -3,7 +3,7 @@ import 'dialog_tunai.dart';
 import 'dialog_kartu_kredit.dart';
 import 'dialog_qris.dart';
 
-class PembayaranPage extends StatelessWidget {
+class PembayaranPage extends StatefulWidget {
   final String title;
   final String type;
   final String price;
@@ -16,6 +16,11 @@ class PembayaranPage extends StatelessWidget {
   });
 
   @override
+  State<PembayaranPage> createState() => _PembayaranPageState();
+}
+
+class _PembayaranPageState extends State<PembayaranPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -24,82 +29,19 @@ class PembayaranPage extends StatelessWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () =>
-              Navigator.pop(context), //agar bisa kembali ke halaman sebelumnya
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Pembayaran", style: TextStyle(color: Colors.black)),
+        title: const Text(
+          "Pembayaran",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.receipt_long_rounded,
-                      color: Colors.blue,
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Total Tagihan",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        const SizedBox(height: 4),
-
-                        Text(
-                          price,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        Text(
-                          "Nama Pesanan                       $title - $type\nTanggal                                    22 Mei 2025",
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color.fromARGB(255, 94, 92, 92),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildTotalTagihan(),
 
             const SizedBox(height: 30),
 
@@ -117,8 +59,11 @@ class PembayaranPage extends StatelessWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) =>
-                      DialogTunai(price: price, title: title, type: type),
+                  builder: (_) => DialogTunai(
+                    price: widget.price,
+                    title: widget.title,
+                    type: widget.type,
+                  ),
                 );
               },
             ),
@@ -132,8 +77,11 @@ class PembayaranPage extends StatelessWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) =>
-                      DialogKartuKredit(price: price, title: title, type: type),
+                  builder: (_) => DialogKartuKredit(
+                    price: widget.price,
+                    title: widget.title,
+                    type: widget.type,
+                  ),
                 );
               },
             ),
@@ -147,48 +95,105 @@ class PembayaranPage extends StatelessWidget {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (_) =>
-                      DialogQRIS(price: price, title: title, type: type),
+                  builder: (_) => DialogQRIS(
+                    price: widget.price,
+                    title: widget.title,
+                    type: widget.type,
+                  ),
                 );
               },
             ),
 
             const SizedBox(height: 30),
 
-            const Text(
-              "Punya pertanyaan?",
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            ),
-
-            const SizedBox(height: 10),
-
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: Row(
-                children: const [
-                  Icon(Icons.question_mark_outlined, color: Colors.blue),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "Hubungi Admin untuk bantuan pembayaran.",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildHelpBox(),
           ],
         ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildTotalTagihan() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 3)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.receipt_long_rounded,
+              color: Colors.blue,
+              size: 40,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Total Tagihan",
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.price,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Nama Pesanan                       ${widget.title} - ${widget.type}\n"
+                  "Tanggal                                    22 Mei 2025",
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 94, 92, 92),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelpBox() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8),
+        ],
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.question_mark_outlined, color: Colors.blue),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Hubungi Admin untuk bantuan pembayaran.",
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+        ],
       ),
     );
   }
