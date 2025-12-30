@@ -3,7 +3,7 @@ import 'dialog_tunai.dart';
 import 'dialog_kartu_kredit.dart';
 import 'dialog_qris.dart';
 
-class PembayaranPage extends StatefulWidget {
+class PembayaranPage extends StatelessWidget {
   final String title;
   final String type;
   final String price;
@@ -15,11 +15,6 @@ class PembayaranPage extends StatefulWidget {
     required this.price,
   });
 
-  @override
-  State<PembayaranPage> createState() => _PembayaranPageState();
-}
-
-class _PembayaranPageState extends State<PembayaranPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +55,9 @@ class _PembayaranPageState extends State<PembayaranPage> {
                 showDialog(
                   context: context,
                   builder: (_) => DialogTunai(
-                    price: widget.price,
-                    title: widget.title,
-                    type: widget.type,
+                    price: price,
+                    title: title,
+                    type: type,
                   ),
                 );
               },
@@ -78,9 +73,9 @@ class _PembayaranPageState extends State<PembayaranPage> {
                 showDialog(
                   context: context,
                   builder: (_) => DialogKartuKredit(
-                    price: widget.price,
-                    title: widget.title,
-                    type: widget.type,
+                    price: price,
+                    title: title,
+                    type: type,
                   ),
                 );
               },
@@ -96,9 +91,9 @@ class _PembayaranPageState extends State<PembayaranPage> {
                 showDialog(
                   context: context,
                   builder: (_) => DialogQRIS(
-                    price: widget.price,
-                    title: widget.title,
-                    type: widget.type,
+                    price: price,
+                    title: title,
+                    type: type,
                   ),
                 );
               },
@@ -112,8 +107,6 @@ class _PembayaranPageState extends State<PembayaranPage> {
       ),
     );
   }
-
-
 
   Widget _buildTotalTagihan() {
     return Container(
@@ -150,7 +143,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.price,
+                  price,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -158,7 +151,7 @@ class _PembayaranPageState extends State<PembayaranPage> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "Nama Pesanan                       ${widget.title} - ${widget.type}\n"
+                  "Nama Pesanan                       $title - $type\n"
                   "Tanggal                                    22 Mei 2025",
                   style: const TextStyle(
                     fontSize: 13,

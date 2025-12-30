@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'bukti_pembayaran_page.dart';
 
-class DialogKartuKredit extends StatelessWidget {
+class DialogKartuKredit extends StatefulWidget {
   final String title;
   final String type;
   final String price;
@@ -14,24 +15,38 @@ class DialogKartuKredit extends StatelessWidget {
   });
 
   @override
+  State<DialogKartuKredit> createState() => _DialogKartuKreditState();
+}
+
+class _DialogKartuKreditState extends State<DialogKartuKredit> {
+  bool isLoading = false;
+  bool isCopied = false;
+
+  final String nomorKartu = "8810 7766 1234 9876";
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // HEADER
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   "Pembayaran Kartu Kredit",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: isLoading ? null : () => Navigator.pop(context),
                   child: const Icon(Icons.close, size: 22),
                 ),
               ],
@@ -39,7 +54,10 @@ class DialogKartuKredit extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            Image.asset("assets/images/card.png", height: 120),
+            Image.asset(
+              "assets/images/card.png",
+              height: 120,
+            ),
 
             const SizedBox(height: 14),
 
@@ -51,28 +69,34 @@ class DialogKartuKredit extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      "8810 7766 1234 9876",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      nomorKartu,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: _handleCopy,
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: isCopied ? Colors.green : Colors.blue,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.copy, color: Colors.white, size: 16),
-                          SizedBox(width: 4),
+                          Icon(
+                            isCopied ? Icons.check : Icons.copy,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
                           Text(
-                            "Salin",
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.white),
+                            isCopied ? "Tersalin" : "Salin",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -99,37 +123,72 @@ class DialogKartuKredit extends StatelessWidget {
 
             const SizedBox(height: 22),
 
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-
-              // === PINDAH KE HALAMAN BUKTI ===
-              onPressed: () {
-                Navigator.pop(context);
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BuktiPembayaranPage(
-                      title: title,
-                      type: type,
-                      price: price,
-                    ),
+          
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-              },
-
-              child: const Text(
-                "Konfirmasi Pembayaran",
-                style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onPressed: isLoading ? null : _handleConfirmPayment,
+                child: isLoading
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        "Konfirmasi Pembayaran",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _handleCopy() {
+    Clipboard.setData(ClipboardData(text: nomorKartu));
+
+    setState(() {
+      isCopied = true;
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      setState(() {
+        isCopied = false;
+      });
+    });
+  }
+
+  void _handleConfirmPayment() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BuktiPembayaranPage(
+          title: widget.title,
+          type: widget.type,
+          price: widget.price,
         ),
       ),
     );
